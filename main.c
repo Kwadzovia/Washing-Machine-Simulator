@@ -47,7 +47,7 @@ void Full_Port_Init(void) {
     GPIO_PORTA_CR_R = 0xE0;                 // allow changes to PA7-5
     GPIO_PORTA_AMSEL_R = 0x00;              // disable analog on PortF
     GPIO_PORTA_PCTL_R = 0x00000000;         // use pins as GPIO
-    GPIO_PORTA_DIR_R = 0xE0;                // PA7,PA6,PA5 Out
+    GPIO_PORTA_DIR_R = 0x00;                // PA7,PA6,PA5 In
     GPIO_PORTA_AFSEL_R = 0x00;              // disable alt function on PA
     GPIO_PORTA_PUR_R = 0x00;                // no inputs, no pullups
     GPIO_PORTA_DEN_R = 0xE0;                // enable digital I/O on PA7-5
@@ -86,7 +86,7 @@ void Full_Port_Init(void) {
     GPIO_PORTF_CR_R = 0x13;                 // allow changes to PF4-0
     GPIO_PORTF_AMSEL_R = 0x00;              // disable analog on PortF
     GPIO_PORTF_PCTL_R = 0x00000000;         // use pins as GPIO
-    GPIO_PORTF_DIR_R = 0x0E;                // PF4,PF1,PF0 in
+    GPIO_PORTF_DIR_R = 0x04;                // PF4,PF1,PF0 in, PF2 Out
     GPIO_PORTF_AFSEL_R = 0x00;              // disable alt function on PF
     GPIO_PORTF_PUR_R = 0x13;                // enable pull-up on PF0,PF1,PF4
     GPIO_PORTF_DEN_R = 0x00;                // enable digital I/O on PF0,PF1,PF4
