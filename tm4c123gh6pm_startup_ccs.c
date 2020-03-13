@@ -36,6 +36,7 @@ static void FaultISR(void);
 static void IntDefaultHandler(void);
 
 void SWITCH_Handler(void);
+void PortA_Interrupt_Handler(void);
 
 //*****************************************************************************
 //
@@ -86,7 +87,7 @@ void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
     SysTick_Handler,                      // The SysTick handler
-    IntDefaultHandler,                      // GPIO Port A
+    PortA_Interrupt_Handler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
     IntDefaultHandler,                      // GPIO Port D

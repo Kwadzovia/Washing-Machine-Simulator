@@ -19,6 +19,7 @@ volatile unsigned int accept_flag = 0;
 
 
 void SWITCH_Handler(void);
+void PortA_Interrupt_Handler(void);
 
 volatile float duty_cycle = 0.1;
 
@@ -78,6 +79,15 @@ void PortF_Init(void) {
     GPIO_PORTF_ICR_R = 0x11;                // Clear PF4 and PF0 Interrupts Flag
     GPIO_PORTF_IM_R = 0x11;                 // Unmask PF4 and PF0, done setup
     NVIC_EN0_R |= 0x40000000;                // Enable NVIC Pin 31: PORT F
+
+    //Program Select Interrupts
+    GPIO_PORTA_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
+    GPIO_PORTA_IS_R = 0x00;                 // Make PortA interrupts Edge Sensitive
+    GPIO_PORTA_IBE_R = 0x00;                // Make interrupts sensitive to one edge only
+    GPIO_PORTA_IEV_R = ~0xEC;               // Make PA7-5 PA3-2,sensitive to falling edge
+    GPIO_PORTA_ICR_R = 0xEC;                // Clear PA7-5 PA3-2,Interrupts Flag
+    GPIO_PORTA_IM_R = 0xEC;                 // Unmask PA7-5 PA3-2, done setup
+    NVIC_EN0_R |= 0x00000001;                // Enable NVIC Pin 0: PORT A
 
 }
 
@@ -143,25 +153,26 @@ void SysTick_Handler(void){
 
 void SWITCH_Handler(void){
     //Clear Interrupts to prevent triggering again
-    if((GPIO_PORTF_MIS_R & 0x10) == 0x10)
-    {
-        GPIO_PORTF_ICR_R = 0x10;                // Clear PF4 Interrupts Flag
-
-
-        if(menuCount + 1 < 6){
-            menuCount = menuCount + 1;
-        }
-        else{
-            menuCount = 0;
-        }
-
-    }
-
-    if((GPIO_PORTF_MIS_R & 0x01) == 0x01)
-    {
-        GPIO_PORTF_ICR_R = 0x01;                // Clear PF1 Interrupts Flag
-        accept_flag = 1;
-    }
+//    if((GPIO_PORTF_MIS_R & 0x10) == 0x10)
+//    {
+//        GPIO_PORTF_ICR_R = 0x10;                // Clear PF4 Interrupts Flag
+//
+//
+////        if(menuCount + 1 < 6){
+////            menuCount = menuCount + 1;
+////        }
+////        else{
+////            menuCount = 0;
+////        }
+//          menuCount ^= 0x01;
+//    }
+//
+//    if((GPIO_PORTF_MIS_R & 0x01) == 0x01)
+//    {
+//        GPIO_PORTF_ICR_R = 0x01;                // Clear PF1 Interrupts Flag
+//        menuCount ^= 0x02;
+//        //accept_flag = 1;
+//    }
 
 //    // Toggle LED Between red and blue just to its working
 //    GPIO_PORTF_DATA_R ^= 0x06;
@@ -178,3 +189,49 @@ void SWITCH_Handler(void){
 
 }
 
+void PortA_Interrupt_Handler(void)
+{
+
+//    if((GPIO_PORTF_MIS_R & 0x10) == 0x10)
+//    {
+//        GPIO_PORTF_ICR_R = 0x10;                // Clear PF4 Interrupts Flag
+//
+//
+////        if(menuCount + 1 < 6){
+////            menuCount = menuCount + 1;
+////        }
+////        else{
+////            menuCount = 0;
+////        }
+//          menuCount ^= 0x01;
+//    }
+
+    //Select 3
+    if((GPIO_PORTF_MIS_R & 0x80) == 0x80)
+    {
+        GPIO_PORTF_ICR_R = 0x80;                // Clear PA7 Interrupts Flag
+        menuCount ^= 0x04;
+    }
+
+    //Select 2
+    if((GPIO_PORTF_MIS_R & 0x40) == 0x40)
+    {
+        GPIO_PORTF_ICR_R = 0x40;                // Clear PA6 Interrupts Flag
+        menuCount ^= 0x02;
+    }
+
+    //Select 1
+    if((GPIO_PORTF_MIS_R & 0x20) == 0x20)
+    {
+        GPIO_PORTF_ICR_R = 0x20;                // Clear PA5 Interrupts Flag
+        menuCount ^= 0x01;
+    }
+
+    //Accept Button
+    if((GPIO_PORTF_MIS_R & 0x08) == 0x08)
+    {
+        GPIO_PORTF_ICR_R = 0x08;                // Clear PA3 Interrupts Flag
+        accept_flag = 1;
+    }
+
+}
