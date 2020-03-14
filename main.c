@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "ProgramSelect.h"
+#include "WashTimer.h"
 
 void Full_Port_Init(void);
 void PwmInit(void);
@@ -15,6 +16,8 @@ void wait_for_interrupts(void);
 volatile unsigned long In, Out; // Dont know what these were for
 
 volatile unsigned int menuCount = 0; //Used in Program Select
+volatile unsigned long systickCount = 1000;
+volatile unsigned int washCount = 9;
 volatile unsigned int accept_flag = 0;
 
 
@@ -36,10 +39,12 @@ int main(void){
   enable_interrupts();
 
   //STEP 1: PROGRAM SELECT
+
+
   Program_Select();
 
-
-
+  // Counts 7-segment down from 9
+  Wash_Timer();
 
 
 
@@ -189,6 +194,20 @@ void wait_for_interrupts(void) {
 // Executed every 12.5ns*(period)
 void SysTick_Handler(void){
     
+    systickCount = systickCount - 1;
+    if (systickCount <= 0){
+
+        systickCount = 1000;
+
+        if(washCount > 0)
+        {
+            washCount = washCount -1;
+        }
+        else
+        {
+            washCount = 0;
+        }
+    }
 	
 }
 
