@@ -23,11 +23,11 @@ void Wash_Timer(void){
     while(washCount > 0)
     {
         GPIO_PORTB_DATA_R &= 0xF0; // clear Port B
-        GPIO_PORTB_DATA_R |= 0;
+        GPIO_PORTB_DATA_R |= 0x0F;
 
     }
     GPIO_PORTB_DATA_R &= 0xF0; // clear Port B
-    GPIO_PORTB_DATA_R |= 0;
+    GPIO_PORTB_DATA_R |= 0x0F;
 
     return;
     //Loop if counter != 0
