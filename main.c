@@ -71,9 +71,9 @@ void Full_Port_Init(void) {
     GPIO_PORTA_CR_R = 0xE0;                 // allow changes to PA7-5
     GPIO_PORTA_AMSEL_R = 0x00;              // disable analog on PortF
     GPIO_PORTA_PCTL_R = 0x00000000;         // use pins as GPIO
-    GPIO_PORTA_DIR_R = 0xE0;                // PA7,PA6,PA5 Out
+    GPIO_PORTA_DIR_R = 0x00;                // PA7,PA6,PA5 In
     GPIO_PORTA_AFSEL_R = 0x00;              // disable alt function on PA
-    GPIO_PORTA_PUR_R = 0x00;                // no inputs, no pullups
+    GPIO_PORTA_PUR_R = 0xE0;                // no inputs, no pullups
     GPIO_PORTA_DEN_R = 0xE0;                // enable digital I/O on PA7-5
 
     //Port B
@@ -127,13 +127,13 @@ void Full_Port_Init(void) {
     NVIC_EN0_R |= 0x40000000;                // Enable NVIC Pin 31: PORT F
 
     //Program Select Interrupts
-//    GPIO_PORTA_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
-//    GPIO_PORTA_IS_R = 0x00;                 // Make PortA interrupts Edge Sensitive
-//    GPIO_PORTA_IBE_R = 0x00;                // Make interrupts sensitive to one edge only
-//    GPIO_PORTA_IEV_R = ~0xEC;               // Make PA7-5 PA3-2,sensitive to falling edge
-//    GPIO_PORTA_ICR_R = 0xEC;                // Clear PA7-5 PA3-2,Interrupts Flag
-//    GPIO_PORTA_IM_R = 0xEC;                 // Unmask PA7-5 PA3-2, done setup
-//    NVIC_EN0_R |= 0x00000001;                // Enable NVIC Pin 0: PORT A
+    GPIO_PORTA_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
+    GPIO_PORTA_IS_R = 0x00;                 // Make PortA interrupts Edge Sensitive
+    GPIO_PORTA_IBE_R = 0x00;                // Make interrupts sensitive to one edge only
+    GPIO_PORTA_IEV_R = ~0xEC;               // Make PA7-5 PA3-2,sensitive to falling edge
+    GPIO_PORTA_ICR_R = 0xEC;                // Clear PA7-5 PA3-2,Interrupts Flag
+    GPIO_PORTA_IM_R = 0xEC;                 // Unmask PA7-5 PA3-2, done setup
+    NVIC_EN0_R |= 0x00000001;                // Enable NVIC Pin 0: PORT A
 
 }
 

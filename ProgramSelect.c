@@ -21,9 +21,6 @@ void Program_Select(){
 
     while(1)
     {
-        GPIO_PORTA_DATA_R &= 0x1F;
-        GPIO_PORTA_DATA_R |= 0xE0;
-
         menuTemp = menuCount << 5; // move binary value down to bits 7-5
         //GPIO_PORTF_DATA_R &= 0xE0; //This is where the lights would turn on
         //GPIO_PORTF_DATA_R |= menuTemp;  // Cycle Ports 1:3 depending on count value
