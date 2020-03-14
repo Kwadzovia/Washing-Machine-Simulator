@@ -248,30 +248,30 @@ void PortA_Interrupt_Handler(void)
 //    }
 
     //Select 3
-    if((GPIO_PORTF_MIS_R & 0x80) == 0x80)
+    if((GPIO_PORTA_MIS_R & 0x80) == 0x80)
     {
-        GPIO_PORTF_ICR_R = 0x80;                // Clear PA7 Interrupts Flag
+        GPIO_PORTA_ICR_R = 0x80;                // Clear PA7 Interrupts Flag
         menuCount ^= 0x04;
     }
 
     //Select 2
-    if((GPIO_PORTF_MIS_R & 0x40) == 0x40)
+    if((GPIO_PORTA_MIS_R & 0x40) == 0x40)
     {
-        GPIO_PORTF_ICR_R = 0x40;                // Clear PA6 Interrupts Flag
+        GPIO_PORTA_ICR_R = 0x40;                // Clear PA6 Interrupts Flag
         menuCount ^= 0x02;
     }
 
     //Select 1
-    if((GPIO_PORTF_MIS_R & 0x20) == 0x20)
+    if((GPIO_PORTA_MIS_R & 0x20) == 0x20)
     {
-        GPIO_PORTF_ICR_R = 0x20;                // Clear PA5 Interrupts Flag
+        GPIO_PORTA_ICR_R = 0x20;                // Clear PA5 Interrupts Flag
         menuCount ^= 0x01;
     }
 
     //Accept Button
-    if((GPIO_PORTF_MIS_R & 0x08) == 0x08)
+    if((GPIO_PORTA_MIS_R & 0x08) == 0x08)
     {
-        GPIO_PORTF_ICR_R = 0x08;                // Clear PA3 Interrupts Flag
+        GPIO_PORTA_ICR_R = 0x08;                // Clear PA3 Interrupts Flag
         accept_flag = 1;
     }
 
