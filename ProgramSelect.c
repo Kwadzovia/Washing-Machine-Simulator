@@ -27,7 +27,7 @@ unsigned long Program_Select(){
         //Accept Button
         if((GPIO_PORTA_DATA_R & 0x08) == 0x08)
         {
-            menuCount = GPIO_PORTF_DATA_R;
+            menuCount = (GPIO_PORTA_DATA_R & 0XE0) >> 5; // Only saves pins A7 - A5 then shifts them to the right to start at LSB (00000###)
             return menuCount;
         }
         // Reset Button
