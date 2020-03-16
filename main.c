@@ -28,32 +28,27 @@ volatile float duty_cycle = 0.1;
 
 
 /* main */
-int main(void){
+int main(){
   PLL_Init();                 // bus clock at 80 MHz
   Full_Port_Init();
 
 
   SysTick_Init(80000);        // initialize SysTick timer
 
-  //PwmInit();
+//  //PwmInit();
   enable_interrupts();
+
+
 
   //STEP 1: PROGRAM SELECT
 
-
   Program_Select();
-
-  // Counts 7-segment down from 9
-  Wash_Timer();
-
-
-
-
-
-
-
-
-
+//
+//
+//
+//  // Counts 7-segment down from 9
+//  //Wash_Timer();
+//
   while(1){                   // interrupts every 1ms
       wait_for_interrupts();
   }
@@ -107,15 +102,15 @@ void Full_Port_Init(void) {
     while ((SYSCTL_PRGPIO_R & 0x00000020) == 0)
     {};                          // wait until PortF is ready
     GPIO_PORTF_LOCK_R = 0x4C4F434B;         // unlock GPIO PortF
-    GPIO_PORTF_CR_R = 0x13;                 // allow changes to PF4-0
+    GPIO_PORTF_CR_R = 0x17;                 // allow changes to PF4-0
     GPIO_PORTF_AMSEL_R = 0x00;              // disable analog on PortF
-    GPIO_PORTF_PCTL_R = 0x00000000;         // use pins as GPIO
-    GPIO_PORTF_DIR_R = 0x04;                // PF4,PF1,PF0 in, PF2 Out
+    GPIO_PORTF_PCTL_R = 0x00;         // use pins as GPIO
+    GPIO_PORTF_DIR_R = 0x05;                // PF4,PF1 in, PF0, PF2 Out
     GPIO_PORTF_AFSEL_R = 0x00;              // disable alt function on PF
-    GPIO_PORTF_PUR_R = 0x13;                // enable pull-up on PF0,PF1,PF4
-    GPIO_PORTF_DEN_R = 0x00;                // enable digital I/O on PF0,PF1,PF4
+    GPIO_PORTF_PUR_R = 0x12;                // enable pull-up on PF1,PF4
+    GPIO_PORTF_DEN_R = 0x00;                // enable digital I/O on PF0,PF1,PF2,PF4
 
-    GPIO_PORTF_DATA_R ^= 0x02;              // Start LED as red
+    GPIO_PORTF_DATA_R = 0x03;              // Start LED as red
 
     //Interrupt Setup (NVIC = Nested Vector Interrupt Controller)
     GPIO_PORTF_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
