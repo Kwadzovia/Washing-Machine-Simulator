@@ -4,7 +4,7 @@
  *  Created on: Mar 14, 2020
  *      Author: selik
  */
-// Counts down from 5 on 7-seg
+// Counts down from 9 on 7-seg
 
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
@@ -18,16 +18,16 @@ void Wash_Timer(void){
     //Reset timer
     //Start timer
     systickCount = 1000;
-    washCount = 9;
+    washCount = 0x90;
 
     while(washCount > 0)
     {
-        //GPIO_PORTB_DATA_R &= 0xF0; // clear Port B, Its possible clearing is what is making all the lights look on
-        GPIO_PORTB_DATA_R |= 0x03; //Expect 3
+        //GPIO_PORTB_DATA_R &= 0xF0;
+        GPIO_PORTB_DATA_R = washCount; //Expect 3
 
     }
     //GPIO_PORTB_DATA_R &= 0xF0; // clear Port B
-    GPIO_PORTB_DATA_R |= 0x03; //Expect 3
+    GPIO_PORTB_DATA_R = 0x00; //Expect 3
 
     return;
     //Loop if counter != 0

@@ -41,15 +41,22 @@ int main(){
 
   GPIO_PORTA_ICR_R = 0xFF;
 
+  // Display nothing on the 7-segment
+  GPIO_PORTB_DATA_R = 0xFF;
+
   //STEP 1: PROGRAM SELECT
   // Remains in an infinite loop until a program has been
   // confirmed as selected
-  menuCount = Program_Select();
+  //menuCount = Program_Select();
 
   // Counts 7-segment down from 9
-  //Wash_Timer();
+  Wash_Timer();
 
-  while(1){                   // interrupts every 1ms
+  //GPIO_PORTB_DATA_R &= 0xF0;
+  //GPIO_PORTB_DATA_R &= 0x00;
+
+  //GPIO_PORTB_DATA_R &= 0xF0;
+  while(1){                    // interrupts every 1ms
       wait_for_interrupts();
   }
 }
@@ -59,6 +66,7 @@ int main(){
 void Full_Port_Init(void) {
 
     //Port A
+    // Port A manages the Program selectors, Accept and Cancel buttons
     SYSCTL_RCGC2_R |= 0x00000001;           // activate clock for PortA
     while ((SYSCTL_PRGPIO_R & 0x00000001) == 0)
     {};                          // wait until PortA is ready
@@ -72,17 +80,17 @@ void Full_Port_Init(void) {
     GPIO_PORTA_DEN_R = 0xEC;                // enable digital I/O on PA7-5, 3, 2
 
     //Port B
-    SYSCTL_RCGC2_R |= 0x00000002;           // activate clock for PortB
+    SYSCTL_RCGC2_R |= 0x00000002;           // activate clock for PortC
     while ((SYSCTL_PRGPIO_R & 0x00000002) == 0)
     {};                          // wait until PortB is ready
     GPIO_PORTB_LOCK_R = 0x4C4F434B;         // unlock GPIO PortB
-    GPIO_PORTB_CR_R = 0x0F;                 // allow changes to PB3-PB0
+    GPIO_PORTB_CR_R = 0xF0;                 // allow changes to PB7-4
     GPIO_PORTB_AMSEL_R = 0x00;              // disable analog on PortB
-    GPIO_PORTB_PCTL_R = 0x00000000;         // use pins as GPIO
-    GPIO_PORTB_DIR_R = 0x0F;                // PB3,PB2,PB1,PB0 out
+    GPIO_PORTB_PCTL_R = 0x00;               // use pins 7-4 as GPIO
+    GPIO_PORTB_DIR_R = 0xF0;                // PB7-4 out | IN = 0, OUT = 1
     GPIO_PORTB_AFSEL_R = 0x00;              // disable alt function on PB
-    GPIO_PORTB_PUR_R = 0x00;                // no inputs, no pullups
-    GPIO_PORTB_DEN_R = 0x0F;                // enable digital I/O on PB3-PB0
+    GPIO_PORTB_PUR_R = 0xF0;                // Needs a pullup resistor
+    GPIO_PORTB_DEN_R = 0xF0;                // enable digital I/O on PB7-4
 
     //Port E
     SYSCTL_RCGC2_R |= 0x00000010;           // activate clock for PortE
@@ -195,7 +203,7 @@ void SysTick_Handler(void){
 
         if(washCount > 0)
         {
-            washCount = washCount -1;
+            washCount = washCount - 0x10;
         }
         else
         {
