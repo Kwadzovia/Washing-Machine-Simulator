@@ -5,6 +5,7 @@
 
 #include "ProgramSelect.h"
 #include "WashTimer.h"
+#include "FlashStatus.h"
 
 void Full_Port_Init(void);
 void PwmInit(void);
@@ -13,13 +14,13 @@ void enable_interrupts(void);
 void wait_for_interrupts(void);
 void ResetSwitches(void);
 
-
-//volatile unsigned long In, Out; // Dont know what these were for
-
 volatile unsigned int menuCount = 0; //Used in Program Select
 volatile unsigned long systickCount = 1000;
-volatile unsigned int washCount;
-volatile unsigned int accept_flag = 0;
+volatile unsigned int washCount; // Used by wash timer
+volatile unsigned int accept_flag = 0; // Not used?
+volatile unsigned int flash_status = 1; // Used by FlashStatus
+volatile unsigned int flash_count = 0; // Used by FlashStatus
+
 
 
 void PortF_Interrupt_Handler(void);
@@ -47,10 +48,12 @@ int main(){
   //STEP 1: PROGRAM SELECT
   // Remains in an infinite loop until a program has been
   // confirmed as selected
-  menuCount = Program_Select();
+  //menuCount = Program_Select();
 
   // Counts 7-segment down from 9
-  Wash_Timer();
+  //Wash_Timer();
+
+  FlashStatus(ONE);
 
 
   //GPIO_PORTB_DATA_R &= 0xF0;
@@ -199,6 +202,7 @@ void SysTick_Handler(void){
 
         systickCount = 1000;
 
+        // Used by wash timer
         if(washCount > 0)
         {
             washCount = washCount - 0x10;
@@ -206,6 +210,13 @@ void SysTick_Handler(void){
         else
         {
             washCount = 0;
+        }
+
+        if (flash_count > 0 && flash_status == FALSE) {
+            flash_count -= 1;
+            flash_status = TRUE;
+        } else {
+            flash_status = FALSE;
         }
     }
 	
