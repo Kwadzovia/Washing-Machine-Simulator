@@ -18,7 +18,7 @@ void ResetSwitches(void);
 
 volatile unsigned int menuCount = 0; //Used in Program Select
 volatile unsigned long systickCount = 1000;
-volatile unsigned int washCount = 9;
+volatile unsigned int washCount;
 volatile unsigned int accept_flag = 0;
 
 
@@ -47,13 +47,11 @@ int main(){
   //STEP 1: PROGRAM SELECT
   // Remains in an infinite loop until a program has been
   // confirmed as selected
-  //menuCount = Program_Select();
+  menuCount = Program_Select();
 
   // Counts 7-segment down from 9
   Wash_Timer();
 
-  //GPIO_PORTB_DATA_R &= 0xF0;
-  //GPIO_PORTB_DATA_R &= 0x00;
 
   //GPIO_PORTB_DATA_R &= 0xF0;
   while(1){                    // interrupts every 1ms

@@ -17,7 +17,6 @@
 void ResetSwitches(void);
 
 volatile extern unsigned long menuCount;
-volatile unsigned long menuTemp;
 
 
 unsigned long Program_Select(){
