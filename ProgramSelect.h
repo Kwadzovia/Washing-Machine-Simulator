@@ -8,7 +8,7 @@
 #ifndef __PROGRAMSELECT_H__ // do not include more than once
 #define __PROGRAMSELECT_H__
 
-void Program_Select(void);
+unsigned long Program_Select(void);
 
 
 #endif

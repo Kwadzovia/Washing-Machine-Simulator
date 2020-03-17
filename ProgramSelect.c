@@ -3,36 +3,39 @@
  *
  *  Created on: Mar 12, 2020
  *      Author: selik
+ *
+ *  Modified on: Mar 15, 2020
+ *      Author: Caleb
  */
 
-// This is the first program to be run, pressing the switch triggers an interrupt incrementing the counter.
-// Incrementing the counter
+// This is the first program to be run. The program reads port A and depending on the value of
+// menuCount we can determine the program that is selected
 
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
 
+void ResetSwitches(void);
 
 volatile extern unsigned long menuCount;
 volatile unsigned long menuTemp;
-volatile extern unsigned long accept_flag;
 
 
-void Program_Select(){
+unsigned long Program_Select(){
 
     while(1)
     {
-        menuTemp = menuCount << 5; // move binary value down to bits 7-5
-        //GPIO_PORTF_DATA_R &= 0xE0; //This is where the lights would turn on
-        //GPIO_PORTF_DATA_R |= menuTemp;  // Cycle Ports 1:3 depending on count value
-
-        if(accept_flag != 0) // Program Selected
+        //Accept Button
+        if((GPIO_PORTA_DATA_R & 0x08) == 0x08)
         {
-            return;
+            menuCount = (GPIO_PORTA_DATA_R & 0XE0) >> 5; // Only saves pins A7 - A5 then shifts them to the right to start at LSB (00000###)
+            return menuCount;
         }
-
-
+        // Reset Button
+        else if ((GPIO_PORTA_DATA_R & 0x04) == 0x04)
+        {
+            ResetSwitches();
+        }
     }
-
 }
 
 
