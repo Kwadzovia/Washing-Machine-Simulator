@@ -7,6 +7,7 @@
 //#include "WashTimer.h"
 #include "FlashStatus.h"
 #include "WashCycle.h"
+#include "MotorFunctions.h"
 
 void Full_Port_Init(void);
 void PwmInit(void);
@@ -28,9 +29,6 @@ volatile unsigned int flash_count = 0; // Used by FlashStatus
 void PortF_Interrupt_Handler(void);
 void PortA_Interrupt_Handler(void);
 
-volatile float duty_cycle = 0.1;
-
-
 /* main */
 int main(){
   PLL_Init(); // bus clock at 80 MHz
@@ -39,7 +37,7 @@ int main(){
 
   SysTick_Init(80000);        // initialize SysTick timer
 
-  //PwmInit();
+  PwmInit();
   enable_interrupts();
 
   GPIO_PORTA_ICR_R = 0xFF;
@@ -58,9 +56,10 @@ int main(){
       // were previously selected.
       WashCycle(program);
   }
-  while(1){                    // interrupts every 1ms
-      wait_for_interrupts();
-  }
+
+//  while(1){                    // interrupts every 1ms
+//      wait_for_interrupts();
+//  }
 }
 
 
@@ -141,35 +140,7 @@ void Full_Port_Init(void) {
 
 }
 
-void PwmInit(void){
-//    //Following Shukra Info with changes to work with 80 MHz on Port E
-//
-    SYSCTL_RCGCPWM_R |= 0x01;                // Turn on clock for PWM Module 0
-    SYSCTL_RCGCGPIO_R |= 0x10;               // Turn on clock for PortE
-    SYSCTL_RCC_R &= 0x00160000;             // Turn on PWM Clock divider @16 divisions -> 5 MHz
 
-
-
-    GPIO_PORTE_AFSEL_R = 0x10;              // enable alt function on PE4
-
-
-    GPIO_PORTE_PCTL_R &= ~0x000F0000;       // Clearing Any Set Function at PE4
-    GPIO_PORTE_PCTL_R |= 0x00040000;        // Alternate Function: PWM PE4
-    GPIO_PORTE_DEN_R = 0x10;                // enable digital I/O on PE4
-
-    //Setup PWM
-    PWM0_2_CTL_R = 0;                       // PWM Generator 2 (PWM4 Pin)
-    PWM0_2_GENA_R = 0x0000008C;             // Raise to high when reloading, clear when counter = CMPA
-
-    //PWM VALUES
-    PWM0_2_LOAD_R = 50000;                      // Formula from Shukra
-    PWM0_2_CMPA_R = (1-duty_cycle) * PWM0_2_LOAD_R;     // formula for increment by 10%
-    PWM0_2_CTL_R = 1;                           // Start counter
-    PWM0_ENABLE_R = 0x10;                       // Enable PWM0 Channel 4
-
-
-
-}
 
 
 
