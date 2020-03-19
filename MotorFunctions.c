@@ -22,7 +22,7 @@ void StopMotor() {
 }
 
 void ChangeMotorDirection() {
-    GPIO_PORTE_DATA_R ^= 0x20 // Toggle Motor Direction Pin
+    GPIO_PORTE_DATA_R ^= 0x20; // Toggle Motor Direction Pin
 }
 
 void PwmInit(){
