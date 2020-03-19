@@ -4,7 +4,7 @@
  *  Created on: Mar 14, 2020
  *      Author: selik
  */
-// Counts down from 9 to 0 on 7-seg
+// Counts down from the number passed to 0 on 7-seg
 
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
@@ -12,9 +12,12 @@
 volatile extern unsigned long washCount;
 volatile extern unsigned long systickCount;
 
-void Wash_Timer(void){
+// TODO: Turn this into a timer. Rather than just starting at some number and counting down,
+// we could make this like a little spinner. It starts at the bottom  and goes around cw until it completes the circle.
+// This would make a better representation of a timer. Not sure it's possible to do with the 74LS47 chip.
+void WashTimer(unsigned long startCount){
     // Initialize count and timer
-    washCount = 0x90;
+    washCount = startCount;
     systickCount = 1000;
 
     while(washCount > 0)

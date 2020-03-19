@@ -13,8 +13,10 @@
 
 void FlashStatus(unsigned long status) {
 
-    flash_count = 2;
-    systickCount = 1000;
+    flash_count = FLASH_COUNT_MAX;
+    flashtickCount = FLASH_TICK_MAX;
+    flash_status = FALSE;
+
     while (flash_count > 0) {
         if (flash_status == TRUE) {
             GPIO_PORTB_DATA_R = status;

@@ -4,8 +4,9 @@
 #include <stdint.h>
 
 #include "ProgramSelect.h"
-#include "WashTimer.h"
+//#include "WashTimer.h"
 #include "FlashStatus.h"
+#include "WashCycle.h"
 
 void Full_Port_Init(void);
 void PwmInit(void);
@@ -14,8 +15,9 @@ void enable_interrupts(void);
 void wait_for_interrupts(void);
 void ResetSwitches(void);
 
-volatile unsigned int menuCount = 0; //Used in Program Select
+volatile unsigned int program = 0; //Used in Program Select
 volatile unsigned long systickCount = 1000;
+volatile unsigned long flashtickCount = 500;
 volatile unsigned int washCount; // Used by wash timer
 volatile unsigned int accept_flag = 0; // Not used?
 volatile unsigned int flash_status = 1; // Used by FlashStatus
@@ -37,7 +39,7 @@ int main(){
 
   SysTick_Init(80000);        // initialize SysTick timer
 
-//  //PwmInit();
+  //PwmInit();
   enable_interrupts();
 
   GPIO_PORTA_ICR_R = 0xFF;
@@ -45,18 +47,17 @@ int main(){
   // Display nothing on the 7-segment
   GPIO_PORTB_DATA_R = 0xFF;
 
-  //STEP 1: PROGRAM SELECT
-  // Remains in an infinite loop until a program has been
-  // confirmed as selected
-  //menuCount = Program_Select();
+  while(TRUE) {
+      //STEP 1: PROGRAM SELECT
+      // Remains in an infinite loop until a program has been
+      // confirmed as selected
+      program = Program_Select();
 
-  // Counts 7-segment down from 9
-  //Wash_Timer();
-
-  FlashStatus(ONE);
-
-
-  //GPIO_PORTB_DATA_R &= 0xF0;
+      // STEP 2: WASH CYCLE
+      // Runs through the wash cycle using the settings that
+      // were previously selected.
+      WashCycle(program);
+  }
   while(1){                    // interrupts every 1ms
       wait_for_interrupts();
   }
@@ -211,6 +212,12 @@ void SysTick_Handler(void){
         {
             washCount = 0;
         }
+    }
+
+    flashtickCount = flashtickCount - 1;
+    if (flashtickCount <= 0) {
+
+        flashtickCount = FLASH_TICK_MAX;
 
         if (flash_count > 0 && flash_status == FALSE) {
             flash_count -= 1;

@@ -13,24 +13,28 @@
 
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
+#include "ProgramSelect.h"
 
 void ResetSwitches(void);
 
-volatile extern unsigned long menuCount;
+volatile extern unsigned long program;
 
-
+// TODO: Add error when 110 or 111 are selected as they do not correlate to a program selection.
 unsigned long Program_Select(){
+
+    // Need this to when we loop around or it will immediately start again
+    ResetSwitches();
 
     while(1)
     {
         //Accept Button
-        if((GPIO_PORTA_DATA_R & 0x08) == 0x08)
+        if((GPIO_PORTA_DATA_R & ACCEPT_BUTTON) == ACCEPT_BUTTON)
         {
-            menuCount = (GPIO_PORTA_DATA_R & 0XE0) >> 5; // Only saves pins A7 - A5 then shifts them to the right to start at LSB (00000###)
-            return menuCount;
+            program = (GPIO_PORTA_DATA_R & 0XE0) >> 5; // Only saves pins A7 - A5 then shifts them to the right to start at LSB (00000###)
+            return program;
         }
         // Reset Button
-        else if ((GPIO_PORTA_DATA_R & 0x04) == 0x04)
+        else if ((GPIO_PORTA_DATA_R & RESET_BUTTON) == RESET_BUTTON)
         {
             ResetSwitches();
         }
