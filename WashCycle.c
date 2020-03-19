@@ -17,12 +17,12 @@
 
 unsigned long GetWashTime(unsigned long program);
 unsigned long GetHeatTime(unsigned long program);
-unsigned long GetWashSpeed(unsigned long program);
+float GetWashSpeed(unsigned long program);
 
 void WashCycle(unsigned long program) {
     volatile unsigned long washTime = GetWashTime(program);
     volatile unsigned long heatTime = GetHeatTime(program);
-    volatile float washSpeed = GetWashSpeed(program);
+    float washSpeed = GetWashSpeed(program);
 
     // Stage 1: Empty
     FlashStatus(ONE);
@@ -59,6 +59,8 @@ void WashCycle(unsigned long program) {
 
     // Stage 8: Complete
     FlashStatus(EIGHT);
+
+
 }
 
 unsigned long GetHeatTime(unsigned long program) {
@@ -102,7 +104,7 @@ unsigned long GetWashTime(unsigned long program) {
     }
 }
 
-unsigned long GetWashSpeed(unsigned long program) {
+float GetWashSpeed(unsigned long program) {
 
     // Remove any unnecessary bits
     program &= 0x0F;

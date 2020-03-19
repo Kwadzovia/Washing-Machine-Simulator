@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "tm4c123gh6pm.h"
+#include "MyDefines.h"
 
 volatile extern unsigned long washCount;
 volatile extern unsigned long systickCount;
@@ -18,7 +19,7 @@ volatile extern unsigned long systickCount;
 void WashTimer(unsigned long startCount){
     // Initialize count and timer
     washCount = startCount;
-    systickCount = 1000;
+    systickCount = SYS_TICK_MAX;
 
     while(washCount > 0)
     {

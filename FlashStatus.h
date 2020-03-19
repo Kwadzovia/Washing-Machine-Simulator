@@ -28,7 +28,7 @@ volatile extern unsigned long flashtickCount;
 #define TRUE 1
 #define FALSE 0
 
-#define FLASH_TICK_MAX 500
+#define FLASH_TICK_MAX 50
 #define FLASH_COUNT_MAX 4
 
 

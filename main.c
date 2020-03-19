@@ -1,33 +1,23 @@
-#include "SysTickInts.h"
-#include "PLL.h"
-#include "tm4c123gh6pm.h"
-#include <stdint.h>
-
-#include "ProgramSelect.h"
-//#include "WashTimer.h"
-#include "FlashStatus.h"
-#include "WashCycle.h"
-#include "MotorFunctions.h"
+#include "MyDefines.h"
 
 void Full_Port_Init(void);
-void PwmInit(void);
+//void PwmInit(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
 void wait_for_interrupts(void);
 void ResetSwitches(void);
 
+void PortF_Interrupt_Handler(void);
+void PortA_Interrupt_Handler(void);
+
 volatile unsigned int program = 0; //Used in Program Select
-volatile unsigned long systickCount = 1000;
-volatile unsigned long flashtickCount = 500;
+volatile unsigned long systickCount = SYS_TICK_MAX;
+volatile unsigned long flashtickCount = FLASH_TICK_MAX;
 volatile unsigned int washCount; // Used by wash timer
-volatile unsigned int accept_flag = 0; // Not used?
+//volatile unsigned int accept_flag = 0; // Not used?
 volatile unsigned int flash_status = 1; // Used by FlashStatus
 volatile unsigned int flash_count = 0; // Used by FlashStatus
 
-
-
-void PortF_Interrupt_Handler(void);
-void PortA_Interrupt_Handler(void);
 
 /* main */
 int main(){
@@ -172,7 +162,7 @@ void SysTick_Handler(void){
     systickCount = systickCount - 1;
     if (systickCount <= 0){
 
-        systickCount = 1000;
+        systickCount = SYS_TICK_MAX;
 
         // Used by wash timer
         if(washCount > 0)

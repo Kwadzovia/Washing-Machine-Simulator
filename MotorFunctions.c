@@ -11,18 +11,13 @@
 #include "tm4c123gh6pm.h"
 #include "MotorFunctions.h"
 
-//volatile float duty_cycle = 0.1;
-volatile int test = 0;
-
 void StartMotor(float duty_cycle) {
     PWM0_2_CMPA_R = (1.0-duty_cycle)*PWM0_2_LOAD_R;
-    PWM0_2_CTL_R = 1;
     PWM0_ENABLE_R = START;
 }
 
 void StopMotor() {
     PWM0_ENABLE_R = STOP;
-    PWM0_2_CTL_R = 0;
 
 }
 
@@ -48,8 +43,7 @@ void PwmInit(){
 
     //PWM VALUES
     PWM0_2_LOAD_R = 50000 - 1;                      // Formula from Shukra
-    PWM0_2_CMPA_R = 0.9 * PWM0_2_LOAD_R;     // formula for increment by 10%
-    //PWM0_2_CMPA_R = PWM0_2_LOAD_R; // Default set to maximum
-    PWM0_2_CTL_R = 0;                           // Start the counter
+    PWM0_2_CMPA_R = (1-MOTOR_MAX) * PWM0_2_LOAD_R;     // Default is max
+    PWM0_2_CTL_R = 1;                           // Start the counter
     PWM0_ENABLE_R = STOP;                       // Disable for now PWM0 Channel 4
 }
