@@ -18,6 +18,7 @@
 #include "FlashStatus.h"
 #include "WashCycle.h"
 #include "MotorFunctions.h"
+#include "Buzz.h"
 
 #define SYS_TICK_MAX 100
 
