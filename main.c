@@ -90,10 +90,10 @@ void Full_Port_Init(void) {
     GPIO_PORTE_LOCK_R = 0x4C4F434B;         // unlock GPIO PortE
     GPIO_PORTE_CR_R = 0x30;                 // allow changes to PE5, PE4
     GPIO_PORTE_AMSEL_R = 0x00;              // disable analog on PortE
-    GPIO_PORTE_PCTL_R = 0x00000000;         // use pins as GPIO
+    GPIO_PORTE_PCTL_R = 0x00;               // use pins as GPIO
     GPIO_PORTE_DIR_R = 0x30;                // PE5,PE4 Out
     GPIO_PORTE_AFSEL_R = 0x00;              // disable alt function on PE
-    GPIO_PORTE_PUR_R = 0x00;                // no inputs, no pullups
+    GPIO_PORTE_PUR_R = 0x20;                // PE5 needs pullup
     GPIO_PORTE_DEN_R = 0x30;                // enable digital I/O on PE5, PE4
 
     //Port F

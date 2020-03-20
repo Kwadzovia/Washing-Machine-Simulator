@@ -35,7 +35,6 @@ void PwmInit(){
 
     GPIO_PORTE_PCTL_R &= ~0x000F0000;       // Clearing Any Set Function at PE4
     GPIO_PORTE_PCTL_R |= 0x00040000;        // Alternate Function: PWM PE4
-    GPIO_PORTE_DEN_R = 0x10;                // enable digital I/O on PE4
 
     //Setup PWM
     PWM0_2_CTL_R = 0;                       // PWM Generator 2 (PWM4 Pin)

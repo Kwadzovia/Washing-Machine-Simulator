@@ -18,6 +18,7 @@
 unsigned long GetWashTime(unsigned long program);
 unsigned long GetHeatTime(unsigned long program);
 float GetWashSpeed(unsigned long program);
+void RinseCycle();
 
 void WashCycle(unsigned long program) {
     volatile unsigned long washTime = GetWashTime(program);
@@ -44,8 +45,7 @@ void WashCycle(unsigned long program) {
 
     // Stage 5: Rinse
     FlashStatus(FIVE);
-    StartMotor(washSpeed);
-    WashTimer(MAX_TIME);
+    RinseCycle();
 
     // Stage 6: Spin
     FlashStatus(SIX);
@@ -123,6 +123,18 @@ float GetWashSpeed(unsigned long program) {
         // Heavy load
         return MOTOR_MAX;
     }
+}
+
+void RinseCycle() {
+    volatile int i = 3;
+
+    StartMotor(MOTOR_MID);
+    while (i > 0) {
+        WashTimer(MEDIUM);
+        ChangeMotorDirection();
+        i--;
+    }
+    StopMotor();
 }
 
 
