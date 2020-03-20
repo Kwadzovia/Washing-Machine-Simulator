@@ -8,7 +8,8 @@
 #ifndef WASHTIMER_H_
 #define WASHTIMER_H_
 
-void Wash_Timer(void);
+void WashTimer(unsigned long startCount);
+#define MAX_TIME 0x90
 
 
 

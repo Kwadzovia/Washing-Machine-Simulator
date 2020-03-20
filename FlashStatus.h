@@ -1,5 +1,5 @@
 /*
- * WashTimer.h
+ * FlashStatus.h
  *
  *  Created on: Mar 17, 2020
  *      Author: Caleb
@@ -12,7 +12,7 @@ void FlashStatus(unsigned long status);
 
 volatile extern unsigned int flash_status;
 volatile extern unsigned int flash_count;
-volatile extern unsigned long systickCount;
+volatile extern unsigned long flashtickCount;
 
 #define ONE 0x10
 #define TWO 0x20
@@ -27,6 +27,9 @@ volatile extern unsigned long systickCount;
 
 #define TRUE 1
 #define FALSE 0
+
+#define FLASH_TICK_MAX 50
+#define FLASH_COUNT_MAX 4
 
 
 

@@ -1,32 +1,22 @@
-#include "SysTickInts.h"
-#include "PLL.h"
-#include "tm4c123gh6pm.h"
-#include <stdint.h>
-
-#include "ProgramSelect.h"
-#include "WashTimer.h"
-#include "FlashStatus.h"
+#include "MyDefines.h"
 
 void Full_Port_Init(void);
-void PwmInit(void);
+//void PwmInit(void);
 void disable_interrupts(void);
 void enable_interrupts(void);
 void wait_for_interrupts(void);
 void ResetSwitches(void);
 
-volatile unsigned int menuCount = 0; //Used in Program Select
-volatile unsigned long systickCount = 1000;
-volatile unsigned int washCount; // Used by wash timer
-volatile unsigned int accept_flag = 0; // Not used?
-volatile unsigned int flash_status = 1; // Used by FlashStatus
-volatile unsigned int flash_count = 0; // Used by FlashStatus
-
-
-
 void PortF_Interrupt_Handler(void);
 void PortA_Interrupt_Handler(void);
 
-volatile float duty_cycle = 0.1;
+volatile unsigned int program = 0; //Used in Program Select
+volatile unsigned long systickCount = SYS_TICK_MAX;
+volatile unsigned long flashtickCount = FLASH_TICK_MAX;
+volatile unsigned int washCount; // Used by wash timer
+//volatile unsigned int accept_flag = 0; // Not used?
+volatile unsigned int flash_status = 1; // Used by FlashStatus
+volatile unsigned int flash_count = 0; // Used by FlashStatus
 
 
 /* main */
@@ -37,7 +27,7 @@ int main(){
 
   SysTick_Init(80000);        // initialize SysTick timer
 
-//  //PwmInit();
+  PwmInit();
   enable_interrupts();
 
   GPIO_PORTA_ICR_R = 0xFF;
@@ -45,21 +35,21 @@ int main(){
   // Display nothing on the 7-segment
   GPIO_PORTB_DATA_R = 0xFF;
 
-  //STEP 1: PROGRAM SELECT
-  // Remains in an infinite loop until a program has been
-  // confirmed as selected
-  //menuCount = Program_Select();
+  while(TRUE) {
+      //STEP 1: PROGRAM SELECT
+      // Remains in an infinite loop until a program has been
+      // confirmed as selected
+      program = Program_Select();
 
-  // Counts 7-segment down from 9
-  //Wash_Timer();
-
-  FlashStatus(ONE);
-
-
-  //GPIO_PORTB_DATA_R &= 0xF0;
-  while(1){                    // interrupts every 1ms
-      wait_for_interrupts();
+      // STEP 2: WASH CYCLE
+      // Runs through the wash cycle using the settings that
+      // were previously selected.
+      WashCycle(program);
   }
+
+//  while(1){                    // interrupts every 1ms
+//      wait_for_interrupts();
+//  }
 }
 
 
@@ -100,10 +90,10 @@ void Full_Port_Init(void) {
     GPIO_PORTE_LOCK_R = 0x4C4F434B;         // unlock GPIO PortE
     GPIO_PORTE_CR_R = 0x30;                 // allow changes to PE5, PE4
     GPIO_PORTE_AMSEL_R = 0x00;              // disable analog on PortE
-    GPIO_PORTE_PCTL_R = 0x00000000;         // use pins as GPIO
+    GPIO_PORTE_PCTL_R = 0x00;               // use pins as GPIO
     GPIO_PORTE_DIR_R = 0x30;                // PE5,PE4 Out
     GPIO_PORTE_AFSEL_R = 0x00;              // disable alt function on PE
-    GPIO_PORTE_PUR_R = 0x00;                // no inputs, no pullups
+    GPIO_PORTE_PUR_R = 0x20;                // PE5 needs pullup
     GPIO_PORTE_DEN_R = 0x30;                // enable digital I/O on PE5, PE4
 
     //Port F
@@ -140,35 +130,7 @@ void Full_Port_Init(void) {
 
 }
 
-void PwmInit(void){
-//    //Following Shukra Info with changes to work with 80 MHz on Port E
-//
-    SYSCTL_RCGCPWM_R |= 0x01;                // Turn on clock for PWM Module 0
-    SYSCTL_RCGCGPIO_R |= 0x10;               // Turn on clock for PortE
-    SYSCTL_RCC_R &= 0x00160000;             // Turn on PWM Clock divider @16 divisions -> 5 MHz
 
-
-
-    GPIO_PORTE_AFSEL_R = 0x10;              // enable alt function on PE4
-
-
-    GPIO_PORTE_PCTL_R &= ~0x000F0000;       // Clearing Any Set Function at PE4
-    GPIO_PORTE_PCTL_R |= 0x00040000;        // Alternate Function: PWM PE4
-    GPIO_PORTE_DEN_R = 0x10;                // enable digital I/O on PE4
-
-    //Setup PWM
-    PWM0_2_CTL_R = 0;                       // PWM Generator 2 (PWM4 Pin)
-    PWM0_2_GENA_R = 0x0000008C;             // Raise to high when reloading, clear when counter = CMPA
-
-    //PWM VALUES
-    PWM0_2_LOAD_R = 50000;                      // Formula from Shukra
-    PWM0_2_CMPA_R = (1-duty_cycle) * PWM0_2_LOAD_R;     // formula for increment by 10%
-    PWM0_2_CTL_R = 1;                           // Start counter
-    PWM0_ENABLE_R = 0x10;                       // Enable PWM0 Channel 4
-
-
-
-}
 
 
 
@@ -200,7 +162,7 @@ void SysTick_Handler(void){
     systickCount = systickCount - 1;
     if (systickCount <= 0){
 
-        systickCount = 1000;
+        systickCount = SYS_TICK_MAX;
 
         // Used by wash timer
         if(washCount > 0)
@@ -211,6 +173,12 @@ void SysTick_Handler(void){
         {
             washCount = 0;
         }
+    }
+
+    flashtickCount = flashtickCount - 1;
+    if (flashtickCount <= 0) {
+
+        flashtickCount = FLASH_TICK_MAX;
 
         if (flash_count > 0 && flash_status == FALSE) {
             flash_count -= 1;
