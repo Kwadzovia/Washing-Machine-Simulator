@@ -14,6 +14,7 @@ volatile unsigned int program = 0; //Used in Program Select
 volatile unsigned long systickCount = SYS_TICK_MAX;
 volatile unsigned long flashtickCount = FLASH_TICK_MAX;
 volatile unsigned int washCount; // Used by wash timer
+volatile unsigned int incorrectSelect = 0;
 //volatile unsigned int accept_flag = 0; // Not used?
 volatile unsigned int flash_status = 1; // Used by FlashStatus
 volatile unsigned int flash_count = 0; // Used by FlashStatus
@@ -39,7 +40,21 @@ int main(){
       //STEP 1: PROGRAM SELECT
       // Remains in an infinite loop until a program has been
       // confirmed as selected
-      program = Program_Select();
+
+
+      //This loop ensures correct selection
+      while(incorrectSelect == 0)
+      {
+          program = Program_Select();
+          if(program == 7 || program == 6) // 111 or 110
+          {
+              incorrectSelect = 0;
+          }
+          else
+          {
+              incorrectSelect = 1;
+          }
+      }
 
       // STEP 2: WASH CYCLE
       // Runs through the wash cycle using the settings that
