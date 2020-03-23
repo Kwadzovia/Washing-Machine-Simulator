@@ -13,7 +13,7 @@
 #include "WashTimer.h"
 #include "WashCycle.h"
 #include "MotorFunctions.h"
-
+#include "Buzz.h"
 
 unsigned long GetWashTime(unsigned long program);
 unsigned long GetHeatTime(unsigned long program);
@@ -26,8 +26,11 @@ void WashCycle(unsigned long program) {
     float washSpeed = GetWashSpeed(program);
 
     // Stage 1: Empty
+
+    Buzz(1);    //[SK] Added Please Test
     FlashStatus(ONE);
     WashTimer(MAX_TIME);
+    Buzz(0);    //[SK] Added Please Test
 
     // Stage 2: Fill
     FlashStatus(TWO);
