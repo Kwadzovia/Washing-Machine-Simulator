@@ -14,6 +14,7 @@ volatile unsigned int program = 0; //Used in Program Select
 volatile unsigned long systickCount = SYS_TICK_MAX;
 volatile unsigned long flashtickCount = FLASH_TICK_MAX;
 volatile unsigned int washCount; // Used by wash timer
+volatile unsigned int incorrectSelect = 0;
 //volatile unsigned int accept_flag = 0; // Not used?
 volatile unsigned int flash_status = 1; // Used by FlashStatus
 volatile unsigned int flash_count = 0; // Used by FlashStatus
@@ -24,6 +25,7 @@ int main(){
   PLL_Init(); // bus clock at 80 MHz
   Full_Port_Init(); // Full port initialization
   ResetSwitches(); // Reset switches before we begin
+  Buzz(0); // Turn off the buzzer before we begin
 
   SysTick_Init(80000);        // initialize SysTick timer
 
@@ -39,7 +41,22 @@ int main(){
       //STEP 1: PROGRAM SELECT
       // Remains in an infinite loop until a program has been
       // confirmed as selected
-      program = Program_Select();
+
+
+      //This loop ensures correct selection
+      while(incorrectSelect == 0)
+      {
+          program = Program_Select();
+          if(program == 0x07 || program == 0x06) // 111 or 110
+          {
+              incorrectSelect = 0;
+              FlashStatus(0xA0); // Display error code c
+          }
+          else
+          {
+              incorrectSelect = 1;
+          }
+      }
 
       // STEP 2: WASH CYCLE
       // Runs through the wash cycle using the settings that
