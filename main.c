@@ -40,6 +40,7 @@ int main(){
       //STEP 1: PROGRAM SELECT
       // Remains in an infinite loop until a program has been
       // confirmed as selected
+      incorrectSelect = 0;
 
 
       //This loop ensures correct selection
@@ -128,7 +129,7 @@ void Full_Port_Init(void) {
 
     //The other option is to read the door if closed before beginning cycles
 
-    Interrupt Setup (NVIC = Nested Vector Interrupt Controller)
+    //Interrupt Setup (NVIC = Nested Vector Interrupt Controller)
     GPIO_PORTF_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
     GPIO_PORTF_IS_R = 0x00;                 // Make PortF interrupts Edge Sensitive
     GPIO_PORTF_IBE_R = 0x00;                // Make interrupts sensitive to one edge only
@@ -216,8 +217,9 @@ void PortF_Interrupt_Handler(void){
 
             while((GPIO_PORTF_DATA_R & 0x02) != 0x02) //While P1 is low
             {
-
+                Buzz(1);
             }
+            Buzz(0);
 
         }
 
