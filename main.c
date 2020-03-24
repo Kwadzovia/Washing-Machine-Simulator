@@ -25,6 +25,7 @@ int main(){
   PLL_Init(); // bus clock at 80 MHz
   Full_Port_Init(); // Full port initialization
   ResetSwitches(); // Reset switches before we begin
+  Buzz(0); // Turn off the buzzer before we begin
 
   SysTick_Init(80000);        // initialize SysTick timer
 
@@ -47,9 +48,10 @@ int main(){
       while(incorrectSelect == 0)
       {
           program = Program_Select();
-          if(program == 7 || program == 6) // 111 or 110
+          if(program == 0x07 || program == 0x06) // 111 or 110
           {
               incorrectSelect = 0;
+              FlashStatus(0xA0); // Display error code c
           }
           else
           {
@@ -61,6 +63,7 @@ int main(){
       // Runs through the wash cycle using the settings that
       // were previously selected.
       WashCycle(program);
+      incorrectSelect = 0;
   }
 
 //  while(1){                    // interrupts every 1ms
