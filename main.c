@@ -62,6 +62,7 @@ int main(){
       // Runs through the wash cycle using the settings that
       // were previously selected.
       WashCycle(program);
+      incorrectSelect = 0;
   }
 
 //  while(1){                    // interrupts every 1ms
