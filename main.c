@@ -125,14 +125,17 @@ void Full_Port_Init(void) {
     GPIO_PORTF_DEN_R = 0x1F;                // enable digital I/O on PF0,PF1,PF2,PF4
 
     // I don't think we need these interrupts set for PF or PA
-    //Interrupt Setup (NVIC = Nested Vector Interrupt Controller)
-//    GPIO_PORTF_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
-//    GPIO_PORTF_IS_R = 0x00;                 // Make PortF interrupts Edge Sensitive
-//    GPIO_PORTF_IBE_R = 0x00;                // Make interrupts sensitive to one edge only
-//    GPIO_PORTF_IEV_R = ~0x11;               // Make PF4 and PF0 sensitive to falling edge
-//    GPIO_PORTF_ICR_R = 0x11;                // Clear PF4 and PF0 Interrupts Flag
-//    GPIO_PORTF_IM_R = 0x11;                 // Unmask PF4 and PF0, done setup
-//    NVIC_EN0_R |= 0x40000000;                // Enable NVIC Pin 31: PORT F
+
+    //The other option is to read the door if closed before beginning cycles
+
+    Interrupt Setup (NVIC = Nested Vector Interrupt Controller)
+    GPIO_PORTF_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
+    GPIO_PORTF_IS_R = 0x00;                 // Make PortF interrupts Edge Sensitive
+    GPIO_PORTF_IBE_R = 0x00;                // Make interrupts sensitive to one edge only
+    GPIO_PORTF_IEV_R = 0x02;               // Make PF1 sensitive to rising edge
+    GPIO_PORTF_ICR_R = 0x02;                // Clear PF1 and PF1 Interrupts Flag
+    GPIO_PORTF_IM_R = 0x02;                 // Unmask PF1, done setup
+    NVIC_EN0_R |= 0x40000000;                // Enable NVIC Pin 31: PORT F
 
     //Program Select Interrupts
 //    GPIO_PORTA_IM_R = 0x00;                 // Mask All Interrupts to prevent Firing during setup
@@ -206,6 +209,17 @@ void SysTick_Handler(void){
 }
 
 void PortF_Interrupt_Handler(void){
+
+        GPIO_PORTF_ICR_R = 0x02;                // Clear PF4 Interrupts Flag
+
+        if(incorrectSelect == 1){   //After Mode Selection
+
+            while((GPIO_PORTF_DATA_R & 0x02) != 0x02) //While P1 is low
+            {
+
+            }
+
+        }
 
 }
 
