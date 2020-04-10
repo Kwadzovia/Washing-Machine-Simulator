@@ -43,21 +43,33 @@ void WashCycle(unsigned long program) {
     WashTimer(washTime);
     StopMotor();
 
-    // Stage 5: Rinse
+    // Stage 5: Empty
+    FlashStatus(ONE);
+    WashTimer(MAX_TIME);
+
+    // Stage 6: Fill
+    FlashStatus(TWO);
+    WashTimer(MAX_TIME);
+
+    // Stage 7: Rinse
     FlashStatus(FIVE);
     RinseCycle();
 
-    // Stage 6: Spin
+    // Stage 8: Empty
+    FlashStatus(ONE);
+    WashTimer(MAX_TIME);
+
+    // Stage 9: Spin
     FlashStatus(SIX);
     StartMotor(MOTOR_MAX);
     WashTimer(MAX_TIME);
     StopMotor();
 
-    // Stage 7: Dry
+    // Stage 10: Dry
     FlashStatus(SEVEN);
     WashTimer(MAX_TIME);
 
-    // Stage 8: Complete
+    // Stage 11: Complete
     Buzz(1);
     FlashStatus(EIGHT);
     Buzz(0);
